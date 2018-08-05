@@ -1,6 +1,8 @@
 package com.seekercapital.averagecalcapi.mode;
 
 import java.io.Serializable;
+import java.util.Objects;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -49,5 +51,19 @@ public class Price implements Serializable {
     @Override
     public String toString(){
         return new StringBuilder().append("Price(").append(price).append(",").append(createAt).append(")").toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Price price1 = (Price) o;
+        return price == price1.price &&
+                createAt == price1.createAt ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, price, createAt);
     }
 }

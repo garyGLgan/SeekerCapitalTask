@@ -1,7 +1,9 @@
 package com.seekercapital.averagecalcapi.service;
 
 import com.seekercapital.averagecalcapi.mode.Price;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
 
 public interface PriceService {
 
