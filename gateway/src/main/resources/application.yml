@@ -1,0 +1,33 @@
+server:
+  port: 8090
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+      - id: price-service
+        uri: lb://price-service
+        predicates:
+        - Path=/price/api/**
+        filters:
+        - RewritePath=/price/api/(?<path>.*), /$\{path}
+      - id: price-web
+        uri: lb://price-web
+        predicates:
+        - Path=/price/web/**
+        filters:
+        - RewritePath=/price/web/(?<path>.*), /$\{path}

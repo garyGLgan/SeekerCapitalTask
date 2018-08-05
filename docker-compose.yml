@@ -1,0 +1,81 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:3.4.2
+    ports:
+    - "27017:27017"
+    volumes:
+    - ./data/db:/data/db
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+    restart: always
+
+  discovery:
+    image: maven:alpine
+    restart: always
+    working_dir: /app
+    volumes:
+    - ./discovery:/app
+    - ~/.m2:/root/.m2
+    ports:
+    - "8761:8761"
+    command: mvn clean spring-boot:run
+
+  gateway:
+    image: maven:alpine
+    restart: always
+    working_dir: /app
+    volumes:
+    - ./gateway:/app
+    - ~/.m2:/root/.m2
+    ports:
+    - 8090:8090
+    depends_on:
+    - discovery
+    command: mvn clean spring-boot:run
+
+  publisher:
+    image: maven:alpine
+    restart: always
+    working_dir: /app
+    volumes:
+    - ./publisher:/app
+    - ~/.m2:/root/.m2
+    depends_on:
+    - rabbitmq
+    command: mvn clean spring-boot:run
+
+  web:
+    image: maven:alpine
+    restart: always
+    working_dir: /app
+    volumes:
+    - ./web:/app
+    - ~/.m2:/root/.m2
+    expose:
+    - "8080"
+    depends_on:
+    - discovery
+    command: mvn clean spring-boot:run
+
+  api:
+    image: maven:alpine
+    restart: always
+    working_dir: /app
+    volumes:
+    - ./api:/app
+    - ~/.m2:/root/.m2
+    expose:
+    - "8080"
+    depends_on:
+    - mongo
+    - rabbitmq
+    - discovery
+    - gateway
+    - publisher
+    command: mvn clean spring-boot:run

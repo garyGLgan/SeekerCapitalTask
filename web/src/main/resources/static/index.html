@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>vue example</title>
+    <script src="https://unpkg.com/vue@2.5.17/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-resource@1.5.1/dist/vue-resource.js"></script>
+    <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.0/dist/mini-default.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        .content{ margin:0 auto; width:768px; border:1px solid #00F}
+    </style>
+</head>
+<body>
+<div id="app" class="content">
+    <div class="card fluid">
+        <div class="section" ><h1>Average Price <small>Get the last average price</small></h1></div>
+        <div class="section">
+            <input type="text" id="Quantity" placeholder="Quantity" v-model="quantity"/>
+            <button class="tertiary" v-on:click="avg()" value="Calc" >Calc</button>
+        </div>
+        <div class="section">
+            <p>{{ message }}</p>
+        </div>
+    </div>
+
+</div>
+</body>
+<script>
+    var app = new Vue({
+        el : '#app',
+        data : {
+            quantity: 0,
+            message: ""
+        },
+        methods:{
+            avg:function(){
+                this.message = "";
+                this.$http.get('/price/api/average-price/'+this.quantity).then( (response) => {
+                    this.message = "The average value of the last " + this.quantity +" prices is " + response.data;
+                },(response) => {
+                        this.message = "request failed";
+                    });
+            }
+        }
+    });
+</script>
+</html>
